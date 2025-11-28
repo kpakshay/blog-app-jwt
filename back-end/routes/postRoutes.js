@@ -14,9 +14,9 @@ router.get("/", getPosts);
 router.get("/:id", getSinglePost);
 
 // below are protected
-// router.post("/", protect, createPost);
+router.post("/", protect, createPost);
 
-router.post("/", createPost);
+// router.post("/", createPost);
 router.put("/:id", protect, updatePost);
 router.delete("/:id", protect, deletePost);
 

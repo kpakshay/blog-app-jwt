@@ -9,6 +9,7 @@ import Posts from './pages/posts'
 import CreatePost from './pages/CreatePost'
 import PostView from './pages/PostView'
 import About from './pages/About'
+import EditPost from './pages/EditPost'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -17,15 +18,15 @@ function App() {
     <>
     <MainLayout>
     <Routes>
-      <Route path="/login" element={<Login/>}/>
+      {/* <Route path="/login" element={<Login/>}/> */}
       <Route path="/" element={<Home/>}/>
-      <Route path="/Register" element={<Register/>}/>
+      {/* <Route path="/Register" element={<Register/>}/> */}
       {/* <Route path="/" element={<Home />} /> */}
         <Route path="/about" element={<About />} />
 
         {/* Public Routes */}
-        {/* <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} /> */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         {/* Blog Public */}
         <Route path="/posts" element={<Posts />} />
@@ -33,6 +34,7 @@ function App() {
 
         {/* Protected Routes */}
         <Route path="/create" element={<CreatePost />} />
+        <Route path="/edit/:id" element={<EditPost />} /> 
         {/* <Route path="/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
         <Route path="/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} /> */}
     </Routes>

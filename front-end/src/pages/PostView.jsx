@@ -1,25 +1,48 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 export default function PostView() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let res=axios.get(`http://localhost:3000/api/posts/${id}`).then(res => setPost(res.data));
-    console.log(res)
+    const fetchPost = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3000/api/posts/${id}`);
+        setPost(res.data);
+        console.log(res.data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load post");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
   }, [id]);
 
-  if (!post) return "Loading...";
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (!post) return <p>No post found</p>;
 
   return (
-    <div>
-      <h1>{post.title}</h1>
-      {/* <p><b>By:</b> {post.author.username}</p> */}
-      <p>{post.content}</p>
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+      <p className="text-gray-600 mb-2">
+        <b>By:</b> {post.author?.username || "Unknown"}
+      </p>
+      <p className="mb-6">{post.content}</p>
 
-      <a href={`/edit/${post._id}`}>Edit</a>
+      <Link
+        to={`/edit/${post._id}`}
+        className="text-blue-600 hover:underline"
+      >
+        Edit
+      </Link>
     </div>
   );
 }

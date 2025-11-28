@@ -25,7 +25,7 @@ export default function Login() {
 
       // const data = await res.json();
       console.log(res.data);
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       console.error(error.response?.data||"Login Failed", error)
     }
