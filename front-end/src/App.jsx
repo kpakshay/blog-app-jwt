@@ -4,18 +4,39 @@ import './App.css'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/RegisterUser'
+import MainLayout from './layout/MainLayout'
+import Posts from './pages/posts'
+import CreatePost from './pages/CreatePost'
+import PostView from './pages/PostView'
+import About from './pages/About'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
+    <MainLayout>
     <Routes>
       <Route path="/login" element={<Login/>}/>
-      <Route path="/Home" element={<Home/>}/>
+      <Route path="/" element={<Home/>}/>
       <Route path="/Register" element={<Register/>}/>
-    </Routes>
+      {/* <Route path="/" element={<Home />} /> */}
+        <Route path="/about" element={<About />} />
 
+        {/* Public Routes */}
+        {/* <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} /> */}
+
+        {/* Blog Public */}
+        <Route path="/posts" element={<Posts />} />
+        <Route path="/post/:id" element={<PostView />} />
+
+        {/* Protected Routes */}
+        <Route path="/create" element={<CreatePost />} />
+        {/* <Route path="/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
+        <Route path="/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} /> */}
+    </Routes>
+  </MainLayout>
     </>
   )
 }

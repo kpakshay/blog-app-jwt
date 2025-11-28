@@ -8,6 +8,6 @@ router.post('/login', loginUser)
 router.post('/register', registerUser)
 router.post('/logout', logOutUser)
 router.post('/profile',protect,getCurrentUserProfile)
-router.get('/home',protect,home)
+router.get('/home',home)
 
 export default router;

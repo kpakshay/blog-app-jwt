@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import userRoutes from './routes/userRoute.js'
+import postRoutes from "./routes/postRoutes.js";
 import cookieParser from "cookie-parser";
 
 dotenv.config()
@@ -33,6 +34,8 @@ app.use('/get',(req,res)=>{console.log("hiii76")
     res.send("Hii")
 })
 app.use('/api/users',userRoutes)
+app.use("/api/posts", postRoutes);
+
 // app.get('/',(req,res)=>{
 //     res.send("hi")
 //     console.log("/// hit")
