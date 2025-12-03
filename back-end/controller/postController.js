@@ -31,6 +31,7 @@ export const createPost = async (req, res) => {
 };
 
 export const updatePost = async (req, res) => {
+    try{
   const post = await Post.findById(req.params.id);
 
   if (!post) return res.status(404).json({ message: "Post not found" });
@@ -44,7 +45,11 @@ export const updatePost = async (req, res) => {
   post.content = req.body.content;
   await post.save();
 
-  res.json(post);
+  res.status(200).json({ message: "Post updated successfully", post });
+}catch(error){
+    console.log(error, "Update Post Error")
+    res.status(500).json({message:"Server Error"})
+}
 };
 
 export const deletePost = async (req, res) => {

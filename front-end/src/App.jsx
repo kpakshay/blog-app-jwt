@@ -10,10 +10,10 @@ import CreatePost from './pages/CreatePost'
 import PostView from './pages/PostView'
 import About from './pages/About'
 import EditPost from './pages/EditPost'
+import { ProtectedRoute } from './Components/ProtectedRoute'
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  //  const { showLogin, setShowLogin, showRegister, setShowRegister } = useAuth();
   return (
     <>
     <MainLayout>
@@ -33,10 +33,8 @@ function App() {
         <Route path="/post/:id" element={<PostView />} />
 
         {/* Protected Routes */}
-        <Route path="/create" element={<CreatePost />} />
-        <Route path="/edit/:id" element={<EditPost />} /> 
-        {/* <Route path="/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
-        <Route path="/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} /> */}
+        <Route path="/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
+        <Route path="/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} /> 
     </Routes>
   </MainLayout>
     </>

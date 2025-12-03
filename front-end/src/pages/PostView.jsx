@@ -1,12 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useAuth } from "../Context/useAuth";
 
 export default function PostView() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+    const {user} = useAuth()
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -37,12 +39,13 @@ export default function PostView() {
       </p>
       <p className="mb-6">{post.content}</p>
 
-      <Link
+      { user && <Link
         to={`/edit/${post._id}`}
         className="text-blue-600 hover:underline"
       >
         Edit
       </Link>
+}
     </div>
   );
 }

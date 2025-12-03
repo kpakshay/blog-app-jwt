@@ -36,7 +36,7 @@ export default function EditPost() {
         setSaving(true);
         setError(null);
         try {
-            await axios.put(`http://localhost:3000/api/posts/${id}`,
+            const res = await axios.put(`http://localhost:3000/api/posts/${id}`,
                 { title, content },
                 { withCredentials: true }
             );

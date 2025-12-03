@@ -59,24 +59,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-
-// const loginUser = async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
-//         const user = await User.findOne({ email })
-//         const payload = { userId: user._id };
-//         if (user && (await bcrypt.compare(password, user.password))) {
-//             generateToken(res, payload)
-//             return res.status(200).json({ _id: user._id, username: user.username, email: user.email })
-//         }
-
-//         return res.status(401).send("Invalid Credintials")
-//     } catch (error) {
-//         console.error("Login error:", error)
-//         return res.status(500).send("Server error")
-//     }
-// }
-
 const logOutUser = (req, res) => {
     try {
         res.cookie('jwt', "", {
@@ -91,16 +73,8 @@ const logOutUser = (req, res) => {
 }
 
 const getCurrentUserProfile = async (req, res) => {
-    try {
-        const user = await User.findOne(_id = req._id)
-        if (user) {
-            return res.json({ _id: user._id, username: user.username, email: user.email })
-        }
-        res.status(404).send("User not found")
-    } catch (error) {
-        console.error("Login error:", error)
-        return res.status(500).send("Server error")
-    }
+    console.log("the profile user is :",req.user)
+    res.json(req.user);
 }
 
 const home = async (req, res) => {

@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../Context/useAuth";
+
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { refreshProfile } = useAuth();
   // const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -13,7 +16,7 @@ export default function Login() {
     setShowPassword((prev) => !prev);
   };
 
-  const handleSubmit = async (e) => {debugger
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Clicked")
 
@@ -25,6 +28,7 @@ export default function Login() {
 
       // const data = await res.json();
       console.log(res.data);
+      await refreshProfile()
       navigate("/");
     } catch (error) {
       console.error(error.response?.data||"Login Failed", error)

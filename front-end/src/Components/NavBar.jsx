@@ -1,83 +1,146 @@
 import { Link } from "react-router-dom";
-// import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
+import { useAuth } from "../Context/useAuth.jsx";
 
 export default function Navbar() {
-  // const { user, logout } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
+
+  const navLinks = [
+    { to: "/", label: "Home" },
+    { to: "/posts", label: "Blog" },
+    { to: "/create", label: "Create" },
+    { to: "/about", label: "About" },
+  ];
 
   return (
-    <nav className="bg-gray-800 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Left side - Logo */}
-          <div className="flex-shrink-0">
-            <Link to="/" className="text-xl font-bold text-white">
-              MyBlog
-            </Link>
+    <nav className="bg-gray-900 text-gray-200 shadow-lg sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex justify-between items-center h-16">
+
+          {/* Logo */}
+          <Link to="/" className="text-2xl font-bold tracking-wide text-blue-400">
+            MyBlog
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="hover:text-blue-400 transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
 
-          {/* Center - Links */}
-          <div className="hidden md:flex space-x-6">
-            <Link to="/" className="hover:text-blue-400">Home</Link>
-            <Link to="/posts" className="hover:text-blue-400">Blog</Link>
-            <Link to="/create" className="hover:text-blue-400">Create Post</Link>
-            <Link to="/about" className="hover:text-blue-400">About</Link>
+          {/* Auth Buttons (Desktop) */}
+          <div className="hidden md:flex items-center space-x-4">
+            {user ? (
+              <>
+                <span>Hi, {user?.username}</span>
+                <button
+                  onClick={logout}
+                  className="px-4 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-md transition-colors"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="px-4 py-1.5 bg-gray-700 hover:bg-gray-800 rounded-md transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="px-4 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-md transition-colors"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
 
-          {/* Right side - Auth */}
-          <div className="hidden md:flex space-x-4">
-            {/* Example with auth context */}
-            {/* {user ? (
-              <>
-                <Link to="/create" className="hover:text-blue-400">Create Post</Link>
-                <button onClick={logout} className="hover:text-blue-400">Logout</button>
-              </>
-            ) : ( */}
-              <>
-                <Link to="/login" className="hover:text-blue-400">Login</Link>
-                <Link to="/register" className="hover:text-blue-400">Register</Link>
-              </>
-            {/* )} */}
+          {/* Mobile Menu Button */}
+
+          <div className="md:hidden flex items-center space-x-2">
+            {user && (
+              <span className="text-gray-200">Hi, {user?.username}</span>
+            )}
+            <button
+              className="text-gray-200 focus:outline-none"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle menu"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-7 w-7"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                {isOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
           </div>
+
         </div>
-      </div>
 
-      {/* Mobile menu */}
-      <div className="md:hidden px-4 pb-3 space-y-2 bg-gray-700">
-        <Link to="/" className="block hover:text-blue-400">Home</Link>
-        <Link to="/about" className="block hover:text-blue-400">About</Link>
-        <Link to="/posts" className="block hover:text-blue-400">Blog</Link>
-        <Link to="/create" className="block hover:text-blue-400">Create Post</Link>
-        <Link to="/login" className="block hover:text-blue-400">Login</Link>
-        <Link to="/register" className="block hover:text-blue-400">Register</Link>
+        {/* Mobile Menu */}
+
+        {isOpen && (
+          <div className="md:hidden bg-gray-800 rounded-lg mt-2 py-3 px-4 space-y-3 animate-fadeIn">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setIsOpen(false)}
+                className="block hover:text-blue-400 transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {user ? (
+              <button
+                onClick={() => {
+                  logout();
+                  setIsOpen(false);
+                }}
+                className="w-full text-left hover:text-blue-400 transition-colors"
+              >
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="block hover:text-blue-400"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setIsOpen(false)}
+                  className="block hover:text-blue-400"
+                >
+                  Register
+                </Link>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );
 }
-
-// import { Link } from "react-router-dom";
-// // import { useAuth } from "../context/AuthContext";
-
-// export default function Navbar() {
-// //   const { user, logout } = useAuth();
-
-//   return (
-//     <nav style={{ padding: "10px", background: "#333", color: "#fff" }}>
-//       <Link to="/" style={{ color: "white", marginRight: "20px" }}>Home</Link>
-//       <Link to="/about" style={{ color: "white", marginRight: "20px" }}>About</Link>
-//       <Link to="/posts" style={{ color: "white", marginRight: "20px" }}>Blog</Link>
-//       <Link to="/create" style={{ color: "white", marginRight: "20px" }}>Create Post</Link>
-// {/* 
-//       {user ? (
-//         <>
-//           <Link to="/create" style={{ color: "white", marginRight: "20px" }}>Create Post</Link>
-//           <button onClick={logout}>Logout</button>
-//         </>
-//       ) : ( */}
-//         <>
-//           <Link to="/login" style={{ color: "white", marginLeft: "20px" }}>Login</Link>
-//           <Link to="/register" style={{ color: "white" }}>Register</Link>
-//         </>
-//       {/* )} */}
-//     </nav>
-//   );
-// }

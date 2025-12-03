@@ -3,10 +3,14 @@ import axios from "axios";
 
 // HomeScreen.jsx
 const fetchProfile = async () => {
-  const res = await axios.get("http://localhost:3000/api/users/home", {
+  try{
+  const res = await axios.post("http://localhost:3000/api/users/profile",{}, {
     withCredentials: true
   });
   console.log(res);
+}catch(err){
+  console.log(err,"fetchprifile")
+}
 };
 
 
