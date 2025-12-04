@@ -1,15 +1,22 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../Context/useAuth.jsx";
+import Modal from "./Modal.jsx";
+import { LoginModal } from "../pages/Login.jsx";
+import { useNavigate } from "react-router-dom";
+import Register from "../pages/RegisterUser.jsx";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [showRegisterModal, setShowRegisterModal] = useState(false)
+  const navigate = useNavigate();
 
   const navLinks = [
     { to: "/", label: "Home" },
     { to: "/posts", label: "Blog" },
-    { to: "/create", label: "Create" },
+    { to: "/create", label: "Create", protected: true },
     { to: "/about", label: "About" },
   ];
 
@@ -25,15 +32,41 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="hover:text-blue-400 transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = window.location.pathname === link.to;
+
+              // Protected route
+              if (link.protected) {
+                return (
+                  <button
+                    key={link.to}
+                    onClick={() => {
+                      if (!user) {
+                        setShowLoginModal(true);
+                      } else {
+                        navigate(link.to);
+                      }
+                    }}
+                    className={`px-3 py-1 rounded-md transition-colors ${isActive ? "bg-gray-800 text-blue-300" : "hover:text-blue-400 text-gray-200"
+                      }`}
+                  >
+                    {link.label}
+                  </button>
+                );
+              }
+
+              // Public route
+              return (
+                <button
+                  key={link.to}
+                  onClick={() => navigate(link.to)}
+                  className={`px-3 py-1 rounded-md transition-colors ${isActive ? "bg-gray-800 text-blue-300" : "hover:text-blue-400 text-gray-200"
+                    }`}
+                >
+                  {link.label}
+                </button>
+              );
+            })}
           </div>
 
           {/* Auth Buttons (Desktop) */}
@@ -50,8 +83,21 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link
-                  to="/login"
+
+                <button
+                  onClick={() => { setShowLoginModal(true) }}
+                  className="px-4 py-1.5 bg-gray-700 hover:bg-gray-800 rounded-md transition-colors"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => { setShowRegisterModal(true) }}
+                  className="px-4 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-md transition-colors"
+                >
+                  Sign Up
+                </button>
+                {/* <Link
+                  onClick={() => { setShowLoginModal(true) }}
                   className="px-4 py-1.5 bg-gray-700 hover:bg-gray-800 rounded-md transition-colors"
                 >
                   Login
@@ -61,7 +107,7 @@ export default function Navbar() {
                   className="px-4 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-md transition-colors"
                 >
                   Register
-                </Link>
+                </Link> */}
               </>
             )}
           </div>
@@ -69,9 +115,17 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
 
           <div className="md:hidden flex items-center space-x-2">
-            {user && (
+            {user ? (
               <span className="text-gray-200">Hi, {user?.username}</span>
-            )}
+            )
+              :
+              (<button
+                onClick={() => { setShowLoginModal(true) }}
+                className="px-4 py-1.5 bg-gray-700 hover:bg-gray-800 rounded-md transition-colors"
+              >
+                Login
+              </button>)
+            }
             <button
               className="text-gray-200 focus:outline-none"
               onClick={() => setIsOpen(!isOpen)}
@@ -98,49 +152,50 @@ export default function Navbar() {
         {/* Mobile Menu */}
 
         {isOpen && (
-          <div className="md:hidden bg-gray-800 rounded-lg mt-2 py-3 px-4 space-y-3 animate-fadeIn">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setIsOpen(false)}
-                className="block hover:text-blue-400 transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className="md:hidden bg-gray-700 rounded-lg mt-2 py-3 px-4 space-y-2 animate-fadeIn">
+            {navLinks.map((link) => {
+              const isActive = window.location.pathname === link.to;
 
-            {user ? (
-              <button
-                onClick={() => {
-                  logout();
-                  setIsOpen(false);
-                }}
-                className="w-full text-left hover:text-blue-400 transition-colors"
-              >
-                Logout
-              </button>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  onClick={() => setIsOpen(false)}
-                  className="block hover:text-blue-400"
+              if (link.protected) {
+                return (
+                  <button
+                    key={link.to}
+                    onClick={() => {
+                      if (!user) setShowLoginModal(true);
+                      else navigate(link.to);
+                      setIsOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-md transition-colors ${isActive ? "bg-gray-800 text-blue-300" : "hover:text-blue-400 text-gray-200"
+                      }`}
+                  >
+                    {link.label}
+                  </button>
+                );
+              }
+
+              return (
+                <button
+                  key={link.to}
+                  onClick={() => {
+                    navigate(link.to);
+                    setIsOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-md transition-colors ${isActive ? "bg-gray-800 text-blue-300" : "hover:text-blue-400 text-gray-200"
+                    }`}
                 >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setIsOpen(false)}
-                  className="block hover:text-blue-400"
-                >
-                  Register
-                </Link>
-              </>
-            )}
+                  {link.label}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
+      <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)}>
+        <LoginModal onClose={() => setShowLoginModal(false)} onNotRegistered={() => { setShowLoginModal(false); setShowRegisterModal(true) }} />
+      </Modal>
+      <Modal isOpen={showRegisterModal} onClose={() => setShowRegisterModal(false)}>
+        <Register onClose={() => setShowRegisterModal(false)} onRegistered={() => { setShowRegisterModal(false), setShowLoginModal(true); }} />
+      </Modal>
     </nav>
   );
 }
