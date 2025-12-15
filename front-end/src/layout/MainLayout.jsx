@@ -4,7 +4,7 @@ export default function MainLayout({ children }) {
   return (
     <>
       <Navbar />
-      <main style={{ padding: "20px" }}>
+      <main>
         {children}
       </main>
     </>

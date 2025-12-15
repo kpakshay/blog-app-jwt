@@ -29,10 +29,10 @@ export default function Posts() {
 
 
   if (loading)
-    return <p className="text-gray-600">Loading posts...</p>;
+    return <p className="text-gray-600 text-center">Loading Posts...</p>;
 
   if (error)
-    return <p className="text-red-500">{error}</p>;
+    return <p className="text-red-500 text-center">{error}</p>;
 
   if (posts.length === 0)
     return (

@@ -1,10 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../Context/useAuth.jsx";
 import Modal from "./Modal.jsx";
 import { LoginModal } from "../pages/Login.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useMatch } from "react-router-dom";
 import Register from "../pages/RegisterUser.jsx";
+
+const navItemClasses = (isActive) =>
+  `px-3 py-1 rounded-md transition-colors ${isActive
+    ? "bg-gray-800 text-blue-300"
+    : "hover:text-blue-400 text-gray-200"
+  }`;
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,6 +18,7 @@ export default function Navbar() {
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showRegisterModal, setShowRegisterModal] = useState(false)
   const navigate = useNavigate();
+  const isCreateActive = useMatch("/create/*");
 
   const navLinks = [
     { to: "/", label: "Home" },
@@ -31,42 +38,33 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
+
           <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => {
-              const isActive = window.location.pathname === link.to;
-
-              // Protected route
-              if (link.protected) {
-                return (
-                  <button
-                    key={link.to}
-                    onClick={() => {
-                      if (!user) {
-                        setShowLoginModal(true);
-                      } else {
-                        navigate(link.to);
-                      }
-                    }}
-                    className={`px-3 py-1 rounded-md transition-colors ${isActive ? "bg-gray-800 text-blue-300" : "hover:text-blue-400 text-gray-200"
-                      }`}
-                  >
-                    {link.label}
-                  </button>
-                );
-              }
-
-              // Public route
-              return (
+            {navLinks.map((link) =>
+              link.protected ? (
                 <button
                   key={link.to}
-                  onClick={() => navigate(link.to)}
-                  className={`px-3 py-1 rounded-md transition-colors ${isActive ? "bg-gray-800 text-blue-300" : "hover:text-blue-400 text-gray-200"
-                    }`}
+                  onClick={() => {
+                    if (!user) {
+                      setShowLoginModal(true);
+                    } else {
+                      navigate(link.to);
+                    }
+                  }}
+                  className={navItemClasses(!!isCreateActive)}
                 >
                   {link.label}
                 </button>
-              );
-            })}
+              ) : (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  className={({ isActive }) => navItemClasses(isActive)}
+                >
+                  {link.label}
+                </NavLink>
+              )
+            )}
           </div>
 
           {/* Auth Buttons (Desktop) */}
@@ -96,18 +94,6 @@ export default function Navbar() {
                 >
                   Sign Up
                 </button>
-                {/* <Link
-                  onClick={() => { setShowLoginModal(true) }}
-                  className="px-4 py-1.5 bg-gray-700 hover:bg-gray-800 rounded-md transition-colors"
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="px-4 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-md transition-colors"
-                >
-                  Register
-                </Link> */}
               </>
             )}
           </div>
@@ -115,16 +101,9 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
 
           <div className="md:hidden flex items-center space-x-2">
-            {user ? (
+            {user && (
               <span className="text-gray-200">Hi, {user?.username}</span>
             )
-              :
-              (<button
-                onClick={() => { setShowLoginModal(true) }}
-                className="px-4 py-1.5 bg-gray-700 hover:bg-gray-800 rounded-md transition-colors"
-              >
-                Login
-              </button>)
             }
             <button
               className="text-gray-200 focus:outline-none"
@@ -150,52 +129,84 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-
         {isOpen && (
-          <div className="md:hidden bg-gray-700 rounded-lg mt-2 py-3 px-4 space-y-2 animate-fadeIn">
-            {navLinks.map((link) => {
-              const isActive = window.location.pathname === link.to;
-
-              if (link.protected) {
-                return (
-                  <button
-                    key={link.to}
-                    onClick={() => {
-                      if (!user) setShowLoginModal(true);
-                      else navigate(link.to);
-                      setIsOpen(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 rounded-md transition-colors ${isActive ? "bg-gray-800 text-blue-300" : "hover:text-blue-400 text-gray-200"
-                      }`}
-                  >
-                    {link.label}
-                  </button>
-                );
-              }
-
-              return (
+          <div className="md:hidden bg-gray-700 rounded-lg mt-2 py-3 px-4 space-y-2">
+            {navLinks.map((link) =>
+              link.protected ? (
                 <button
                   key={link.to}
                   onClick={() => {
-                    navigate(link.to);
+                    if (!user) setShowLoginModal(true);
+                    else navigate(link.to);
                     setIsOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-md transition-colors ${isActive ? "bg-gray-800 text-blue-300" : "hover:text-blue-400 text-gray-200"
-                    }`}
+                  className={navItemClasses(!!isCreateActive)}
                 >
                   {link.label}
                 </button>
-              );
-            })}
+              ) : (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  onClick={() => setIsOpen(false)}
+                  className={({ isActive }) =>
+                    `block w-full text-left ${navItemClasses(isActive)}`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              )
+            )}
+            <hr className="border-gray-600 my-2" />
+
+            {/* Auth actions */}
+            {!user ? (
+              <>
+                <button
+                  onClick={() => {
+                    setShowLoginModal(true);
+                    setIsOpen(false);
+                  }}
+                  className="w-full px-3 py-2 bg-gray-800 rounded-md"
+                >
+                  Login
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowRegisterModal(true);
+                    setIsOpen(false);
+                  }}
+                  className="w-full px-3 py-2 bg-blue-500 rounded-md"
+                >
+                  Sign Up
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => {
+                  logout();
+                  setIsOpen(false);
+                }}
+                className="w-full px-3 py-2 bg-red-500 rounded-md"
+              >
+                Logout
+              </button>
+            )}
+
           </div>
         )}
+
       </div>
+
       <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)}>
         <LoginModal onClose={() => setShowLoginModal(false)} onNotRegistered={() => { setShowLoginModal(false); setShowRegisterModal(true) }} />
       </Modal>
+
       <Modal isOpen={showRegisterModal} onClose={() => setShowRegisterModal(false)}>
         <Register onClose={() => setShowRegisterModal(false)} onRegistered={() => { setShowRegisterModal(false), setShowLoginModal(true); }} />
       </Modal>
+
     </nav>
   );
 }
