@@ -16,7 +16,9 @@ export default function PostView() {
       try {
         const res = await axios.get(`http://localhost:3000/api/posts/${id}`);
         setPost(res.data);
-        console.log(res.data);
+        console.log(res.data,"res");
+        
+        console.log(user,"userData");
       } catch (err) {
         console.error(err);
         setError("Failed to load post");
@@ -41,12 +43,17 @@ export default function PostView() {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
-      <p className="text-gray-600 mb-2">
-        <b>By:</b> {post.author?.username || "Unknown"}
-      </p>
-      <p className="mb-6">{post.content}</p>
 
-      {user && <Link
+      <p className="text-gray-600 mb-2">
+        <b>By:</b> {post.author?.username || "Unknown"} • {new Date(post.createdAt).toLocaleString()}
+      </p>
+
+      {post.createdAt !== post.updatedAt && (
+        <p className="text-gray-500 mb-4"> Last updated: {new Date(post.updatedAt).toLocaleString()}</p>
+      )}
+      <p className="text-gray-800 mb-6">{post.content}</p>
+
+      { post.author?._id === user?._id && <Link
         to={`/edit/${post._id}`}
         className="text-blue-600 hover:underline"
       >

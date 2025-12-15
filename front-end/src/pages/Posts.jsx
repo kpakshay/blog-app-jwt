@@ -24,6 +24,10 @@ export default function Posts() {
     fetchPosts();
   }, []);
 
+  const truncate = (str, n = 120) =>
+    str.length > n ? str.slice(0, n).trim() + "..." : str;
+
+
   if (loading)
     return <p className="text-gray-600">Loading posts...</p>;
 
@@ -40,18 +44,20 @@ export default function Posts() {
   return (
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">All Posts</h1>
+
       {posts.map(p => (
-        <div
-          key={p._id}
-          className="border border-gray-300 rounded-md p-4 mb-4 shadow-sm"
-        >
-          <h2 className="text-xl font-semibold text-gray-800">{p.title}</h2>
+        <div key={p._id} className="border border-gray-300 rounded-md p-6 mb-6 shadow hover:shadow-md transition">
+          
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">{p.title}</h2>
 
-          <p className="text-gray-600">{p.content.slice(0, 100)}...</p>
-
-          <p className="text-sm text-gray-500">
-            By {p.author?.username || "Unknown"}
+          <p className="text-sm text-gray-500 mb-4">
+            By {p.author?.username || "Unknown"} • {new Date(p.createdAt).toLocaleDateString()}
+            {p.createdAt !== p.updatedAt && (
+              <> • Last updated {new Date(p.updatedAt).toLocaleDateString()}</>
+            )}
           </p>
+
+          <p className="text-gray-600 mb-4">{truncate(p.content)}</p>
 
           <Link
             to={`/post/${p._id}`}
@@ -60,6 +66,7 @@ export default function Posts() {
             Read More
           </Link>
         </div>
+
       ))}
     </div>
   );
