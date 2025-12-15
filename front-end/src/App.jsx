@@ -1,4 +1,6 @@
 import {Route,Routes} from 'react-router-dom'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import './App.css'
 import Home from './pages/Home'
 import MainLayout from './layout/MainLayout'
@@ -25,6 +27,7 @@ function App() {
         <Route path="/create" element={<ProtectedRoute><CreatePost /></ProtectedRoute>} />
         <Route path="/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} /> 
     </Routes>
+    <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored"/>
   </MainLayout>
     </>
   )

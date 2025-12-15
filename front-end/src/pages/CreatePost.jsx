@@ -1,13 +1,22 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useAuth } from "../Context/useAuth";
 
 export default function CreatePost() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+
+  if (!user) {
+    navigate("/login");
+    return null;
+  }
 
   const handleCreate = async () => {
     if (!title || !content) {
@@ -24,11 +33,21 @@ export default function CreatePost() {
         { title, content },
         { withCredentials: true }
       );
-      console.log(res.data);
-      navigate("/");
+
+      toast.success("Post created successfully");
+      navigate("/posts");
+
     } catch (err) {
-      console.error(err);
-      setError("Failed to create post");
+      let message = "Something went wrong";
+
+      if(err.respomse?.status === 401) {
+        message = "Please login in to create a post";
+      } else if (err.response?.status ===403){
+        message = "You are not allowed to create a post";
+      }
+
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }

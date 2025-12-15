@@ -5,10 +5,11 @@ import { useAuth } from "../Context/useAuth";
 
 export default function PostView() {
   const { id } = useParams();
+  const { user } = useAuth();
+
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-    const {user} = useAuth()
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -19,6 +20,7 @@ export default function PostView() {
       } catch (err) {
         console.error(err);
         setError("Failed to load post");
+        toast.error("Failed to load post");
       } finally {
         setLoading(false);
       }
@@ -27,9 +29,14 @@ export default function PostView() {
     fetchPost();
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-  if (!post) return <p>No post found</p>;
+  if (loading)
+    return <p className="text-gray-600 text-center">Loading...</p>;
+
+  if (error)
+    return <p className="text-red-500 text-center">{error}</p>;
+
+  if (!post)
+    return <p className="text-gray-500 text-center">No post found</p>;
 
   return (
     <div className="max-w-2xl mx-auto p-6">
@@ -39,13 +46,13 @@ export default function PostView() {
       </p>
       <p className="mb-6">{post.content}</p>
 
-      { user && <Link
+      {user && <Link
         to={`/edit/${post._id}`}
         className="text-blue-600 hover:underline"
       >
         Edit
       </Link>
-}
+      }
     </div>
   );
 }

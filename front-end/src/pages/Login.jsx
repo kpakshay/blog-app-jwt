@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { useAuth } from "../Context/useAuth";
 
-export const LoginModal = ({onClose, onNotRegistered}) => {
+export const LoginModal = ({ onClose, onNotRegistered }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -25,9 +26,15 @@ export const LoginModal = ({onClose, onNotRegistered}) => {
         { withCredentials: true }
       );
 
-      await refreshProfile();
+      toast.success("Login successful!");
+
+      try {
+        await refreshProfile();
+      } catch (profileErr) {
+        console.error("Profile refresh failed", profileErr);
+      }
+
       onClose();
-      navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     } finally {

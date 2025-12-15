@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function EditPost() {
     const { id } = useParams();
@@ -21,6 +22,7 @@ export default function EditPost() {
             } catch (err) {
                 console.error(err);
                 setError("Failed to load post");
+                toast.error("Unable to load post");
             } finally {
                 setLoading(false);
             }
@@ -33,30 +35,36 @@ export default function EditPost() {
             setError("Title and content are required");
             return;
         }
+
         setSaving(true);
         setError(null);
+        
         try {
             const res = await axios.put(`http://localhost:3000/api/posts/${id}`,
                 { title, content },
                 { withCredentials: true }
             );
-            alert(res.data.message); // show success message
+
+            toast.success("Post updated successfully");
             navigate(`/post/${id}`);
         } catch (err) {
+            let message = "Something went wrong";
+
             if (err.response?.status === 403) {
-                setError("You are not allowed to edit this post");
+                message ="You are not allowed to edit this post";
             } else if (err.response?.status === 404) {
-                setError("Post not found");
-            } else {
-                setError("Something went wrong");
+                message="Post not found";
             }
+
+            setError(message);
+            toast.error(message);
         } finally {
             setSaving(false);
         }
     };
 
-    if (loading) return <p className="text-gray-600">Loading post...</p>;
-    if (error) return <p className="text-red-500">{error}</p>;
+    if (loading) 
+        return <p className="text-gray-600">Loading post...</p>;
 
     return (
         <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
