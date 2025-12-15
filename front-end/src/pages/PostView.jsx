@@ -53,7 +53,7 @@ export default function PostView() {
       )}
       <p className="text-gray-800 mb-6">{post.content}</p>
 
-      { post.author?._id === user?._id && <Link
+      {user && ( post.author?._id === user?._id) && <Link
         to={`/edit/${post._id}`}
         className="text-blue-600 hover:underline"
       >

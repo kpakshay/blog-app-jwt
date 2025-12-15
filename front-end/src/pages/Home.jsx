@@ -7,7 +7,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
 useEffect(() => {
-  const fetchPosts = async () => {debugger
+  const fetchPosts = async () => {
     try {
       const res = await axios.get("http://localhost:3000/api/posts");
       setPosts(Array.isArray(res.data) ? res.data.slice(0, 3) : []);
@@ -62,7 +62,7 @@ useEffect(() => {
                   {post.content.slice(0, 80)}...
                 </p>
                 <Link
-                  to={`/posts/${post._id}`}
+                  to={`/post/${post._id}`}
                   className="text-blue-600 hover:underline"
                 >
                   Read More
