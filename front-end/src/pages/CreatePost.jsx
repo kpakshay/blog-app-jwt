@@ -13,11 +13,6 @@ export default function CreatePost() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  if (!user) {
-    navigate("/login");
-    return null;
-  }
-
   const handleCreate = async () => {
     if (!title || !content) {
       setError("Title and content are required");
@@ -40,7 +35,7 @@ export default function CreatePost() {
     } catch (err) {
       let message = "Something went wrong";
 
-      if(err.respomse?.status === 401) {
+      if(err.response?.status === 401) {
         message = "Please login in to create a post";
       } else if (err.response?.status ===403){
         message = "You are not allowed to create a post";

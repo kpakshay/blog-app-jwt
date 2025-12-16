@@ -1,9 +1,9 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../Context/useAuth.jsx";
 import Modal from "./Modal.jsx";
 import { LoginModal } from "../pages/Login.jsx";
-import { useNavigate, useMatch } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Register from "../pages/RegisterUser.jsx";
 
 const navItemClasses = (isActive) =>
@@ -17,8 +17,20 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showRegisterModal, setShowRegisterModal] = useState(false)
+  const [redirectTo, setRedirectTo] = useState(null)
+
   const navigate = useNavigate();
-  const isCreateActive = useMatch("/create/*");
+  const location = useLocation()
+
+  const handleProtectedNav = (link) => {
+    if (!user) {
+      setRedirectTo(link.to);
+      setShowLoginModal(true);
+    } else {
+      navigate(link.to);
+    }
+    setIsOpen(false);
+  }
 
   const navLinks = [
     { to: "/", label: "Home" },
@@ -44,14 +56,15 @@ export default function Navbar() {
               link.protected ? (
                 <button
                   key={link.to}
-                  onClick={() => {
-                    if (!user) {
-                      setShowLoginModal(true);
-                    } else {
-                      navigate(link.to);
-                    }
-                  }}
-                  className={navItemClasses(!!isCreateActive)}
+                  onClick={()=>handleProtectedNav(link)}
+                  // onClick={() => {
+                  //   if (!user) {
+                  //     setShowLoginModal(true);
+                  //   } else {
+                  //     navigate(link.to);
+                  //   }
+                  // }}
+                  className={navItemClasses(location.pathname === link.to)}
                 >
                   {link.label}
                 </button>
@@ -135,12 +148,13 @@ export default function Navbar() {
               link.protected ? (
                 <button
                   key={link.to}
-                  onClick={() => {
-                    if (!user) setShowLoginModal(true);
-                    else navigate(link.to);
-                    setIsOpen(false);
-                  }}
-                  className={navItemClasses(!!isCreateActive)}
+                  onClick={()=>handleProtectedNav(link)}
+                  // onClick={() => {
+                  //   if (!user) setShowLoginModal(true);
+                  //   else navigate(link.to);
+                  //   setIsOpen(false);
+                  // }}
+                  className={`block w-full text-left ${navItemClasses(location.pathname === link.to)}`}
                 >
                   {link.label}
                 </button>
@@ -200,7 +214,7 @@ export default function Navbar() {
       </div>
 
       <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)}>
-        <LoginModal onClose={() => setShowLoginModal(false)} onNotRegistered={() => { setShowLoginModal(false); setShowRegisterModal(true) }} />
+        <LoginModal onClose={() => setShowLoginModal(false)} redirectPath={redirectTo} onNotRegistered={() => { setShowLoginModal(false); setShowRegisterModal(true) }} />
       </Modal>
 
       <Modal isOpen={showRegisterModal} onClose={() => setShowRegisterModal(false)}>

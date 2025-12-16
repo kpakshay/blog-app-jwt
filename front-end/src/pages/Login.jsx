@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../Context/useAuth";
 
-export const LoginModal = ({ onClose, onNotRegistered }) => {
+export const LoginModal = ({ onClose, redirectPath, onNotRegistered }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -35,6 +35,12 @@ export const LoginModal = ({ onClose, onNotRegistered }) => {
       }
 
       onClose();
+
+      if (redirectPath) {
+        navigate(redirectPath)
+      } else {
+        navigate("/")
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     } finally {
