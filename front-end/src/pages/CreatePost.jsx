@@ -12,6 +12,16 @@ export default function CreatePost() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
+  };
 
   const handleCreate = async () => {
     if (!title || !content) {
@@ -23,10 +33,21 @@ export default function CreatePost() {
     setError(null);
 
     try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+      if (image) {
+        formData.append("image", image);
+      }
       const res = await axios.post(
         "http://localhost:3000/api/posts",
-        { title, content },
-        { withCredentials: true }
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
       );
 
       toast.success("Post created successfully");
@@ -35,9 +56,9 @@ export default function CreatePost() {
     } catch (err) {
       let message = "Something went wrong";
 
-      if(err.response?.status === 401) {
+      if (err.response?.status === 401) {
         message = "Please login in to create a post";
-      } else if (err.response?.status ===403){
+      } else if (err.response?.status === 403) {
         message = "You are not allowed to create a post";
       }
 
@@ -68,6 +89,46 @@ export default function CreatePost() {
         onChange={e => setContent(e.target.value)}
         className="w-full border border-gray-300 rounded-md p-3 mb-4 h-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
+
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Cover Image (optional)
+        </label>
+
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-500 transition cursor-pointer relative">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="absolute inset-0 opacity-0 cursor-pointer"
+          />
+
+          {!preview ? (
+            <p className="text-gray-500 text-sm">
+              Click to upload an image
+            </p>
+          ) : (
+            <img
+              src={preview}
+              alt="Preview"
+              className="h-40 w-full object-cover rounded-md"
+            />
+          )}
+        </div>
+
+        {preview && (
+          <button
+            type="button"
+            onClick={() => {
+              setImage(null);
+              setPreview(null);
+            }}
+            className="mt-2 text-sm text-red-500 hover:underline"
+          >
+            Remove image
+          </button>
+        )}
+      </div>
 
       <button
         onClick={handleCreate}

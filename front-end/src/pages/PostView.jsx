@@ -16,9 +16,6 @@ export default function PostView() {
       try {
         const res = await axios.get(`http://localhost:3000/api/posts/${id}`);
         setPost(res.data);
-        console.log(res.data,"res");
-        
-        console.log(user,"userData");
       } catch (err) {
         console.error(err);
         setError("Failed to load post");
@@ -51,9 +48,16 @@ export default function PostView() {
       {post.createdAt !== post.updatedAt && (
         <p className="text-gray-500 mb-4"> Last updated: {new Date(post.updatedAt).toLocaleString()}</p>
       )}
+      {post.imageUrl && (
+        <img
+          src={`http://localhost:3000/${post.imageUrl}`}
+          alt={post.title}
+          className="w-full max-h-96 object-cover rounded-md mb-6"
+        />
+      )}
       <p className="text-gray-800 mb-6">{post.content}</p>
 
-      {user && ( post.author?._id === user?._id) && <Link
+      {user && (post.author?._id === user?._id) && <Link
         to={`/edit/${post._id}`}
         className="text-blue-600 hover:underline"
       >

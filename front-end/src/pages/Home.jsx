@@ -24,7 +24,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 px-6 py-12">
-      
+
       {/* HERO SECTION */}
       <section className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-4">
@@ -69,9 +69,21 @@ export default function Home() {
                 key={post._id}
                 className="bg-white p-5 rounded-md shadow hover:shadow-lg transition-shadow"
               >
-                <div className="h-40 bg-gray-200 rounded mb-4 flex items-center justify-center text-gray-500 text-sm">
-                  Image Placeholder
+
+                <div className="h-40 w-full rounded-md overflow-hidden bg-gray-200 mb-4">
+                  {post.imageUrl ? (
+                    <img
+                      src={`http://localhost:3000/${post.imageUrl}`}
+                      alt={post.title}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
+                      No Image Available
+                    </div>
+                  )}
                 </div>
+
 
                 <h3 className="font-semibold text-lg mb-2">
                   {post.title}

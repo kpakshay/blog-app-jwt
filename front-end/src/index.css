@@ -2,6 +2,12 @@
 @import "tailwindcss";
 
 /* Optional: your custom styles */
+html,
 body {
+  overscroll-behavior: none;
   font-family: 'Inter', sans-serif;
+}
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
 }
